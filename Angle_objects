@@ -1,0 +1,32 @@
+import cv2
+import numpy as np
+
+# Load the image
+img = cv2.imread('image.jpg')
+
+# Convert the image to grayscale
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Apply Canny edge detection
+edges = cv2.Canny(gray, 50, 150, apertureSize=3)
+
+# Find the contours of the objects
+contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+# Select the two largest contours
+contours = sorted(contours, key=cv2.contourArea, reverse=True)[:2]
+
+# Find the orientation of the two objects
+angles = []
+for cnt in contours:
+    rect = cv2.minAreaRect(cnt)
+    angle = rect[2]
+    if angle < -45:
+        angle += 90
+    angles.append(angle)
+
+# Calculate the angle between the two objects
+angle_between_objects = abs(angles[0] - angles[1])
+
+# Print the angle between the two objects
+print('Angle between objects:', angle_between_objects)
